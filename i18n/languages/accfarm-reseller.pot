@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Accfarm Reseller\n"
-"POT-Creation-Date: 2022-04-07 01:50+0300\n"
-"PO-Revision-Date: 2022-04-07 01:50+0300\n"
+"POT-Creation-Date: 2022-04-19 16:52+0300\n"
+"PO-Revision-Date: 2022-04-19 16:52+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -64,6 +64,14 @@ msgstr ""
 
 #: src/Pages/Hooks.php:56
 msgid "Order status on Accfarm callback received"
+msgstr ""
+
+#: src/Pages/Import.php:21 src/Pages/Import.php:22
+msgid "Import"
+msgstr ""
+
+#: src/Pages/Logs.php:21 src/Pages/Logs.php:22
+msgid "Logs"
 msgstr ""
 
 #: src/Pages/Mail.php:22 src/Pages/Mail.php:23
@@ -237,57 +245,61 @@ msgstr ""
 msgid "Accfarm Order"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:47
+#: src/Services/OrderAdminFields.php:48
 msgid "Order Number"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:50
+#: src/Services/OrderAdminFields.php:51
 msgid "Order Status"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:58
+#: src/Services/OrderAdminFields.php:59
 msgid "ID"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:59
+#: src/Services/OrderAdminFields.php:60
 msgid "Name"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:60
+#: src/Services/OrderAdminFields.php:61
 msgid "Product Name"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:61
+#: src/Services/OrderAdminFields.php:62
 msgid "Category Name"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:62
+#: src/Services/OrderAdminFields.php:63
 msgid "Url"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:62
+#: src/Services/OrderAdminFields.php:63
 msgid "Link"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:63
+#: src/Services/OrderAdminFields.php:64
 msgid "Quantity"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:64
+#: src/Services/OrderAdminFields.php:65
 msgid "Price"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:71 src/Services/OrderCustomFields.php:53
+#: src/Services/OrderAdminFields.php:72 src/Services/OrderCustomFields.php:53
 msgid "Accounts Download Link"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:73 src/Services/OrderCustomFields.php:55
+#: src/Services/OrderAdminFields.php:74 src/Services/OrderCustomFields.php:55
 #: src/Services/ThankYouCustomFields.php:52
 msgid "download"
 msgstr ""
 
-#: src/Services/OrderAdminFields.php:80
+#: src/Services/OrderAdminFields.php:81
 msgid "Delivery Time"
+msgstr ""
+
+#: src/Services/OrderAdminFields.php:91
+msgid "Error!"
 msgstr ""
 
 #: src/Services/OrderCustomFields.php:27
