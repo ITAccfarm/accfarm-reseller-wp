@@ -5,6 +5,9 @@ With this plugin you can successfully and easily resell accfarm account
 just by installation and minor configuration. It is recommended to read this
 guide fully before using the plugin.
 
+Note that this plugin doesn't automatically check changes 
+in Accfarm prices and stock, so it has to de done manually.
+
 - [Download](#Download)
 - [Workflow](#Workflow)
 - [Installation](#Installation)
