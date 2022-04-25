@@ -69,8 +69,7 @@ class ResellerSDK
      */
     public function __construct(string $bearerToken = '', string $userSecret = '')
     {
-//        $this->baseUrl = 'https://accfarm.com/api/v1/';
-        $this->baseUrl = 'http://accsfarm.localhost/api/v1/';
+        $this->baseUrl = 'https://accfarm.com/api/v1/';
 
         $this->bearerToken = $bearerToken ?? '';
         $this->userSecret = $userSecret ?? '';
