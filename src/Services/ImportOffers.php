@@ -228,52 +228,62 @@ class ImportOffers
             update_post_meta($post_id, '_accfarm_offer_id', $offer['id']);
 
             if ($options['setPrices']) {
-                $price = (float) $offer['price_value'];
-
-                if (!empty($options['margin'])) {
-                    if ($options['marginType'] == 'sum') {
-                        $price += $options['margin'];
-                    } elseif ($options['marginType'] == 'percent') {
-                        $price = $price * ($options['margin'] / 100);
-                    }
-                }
-
-                $price = round($price, 2);
-
-                if ($price != 0) {
-                    update_post_meta($post_id, '_price', $price);
-                }
+                $this->setPrices($offer, $post_id);
             }
 
-            $imageData = $this->getPreviewImage($categories, $offer);
+            $this->setImage($categories, $offer, $post_id);
+        }
+    }
 
-            if (empty($imageData)) {
-                continue;
+    private function setImage($categories, $offer, $post_id)
+    {
+        $imageData = $this->getPreviewImage($categories, $offer);
+
+        if (empty($imageData)) {
+            return;
+        }
+
+        if (!empty($imageData['imageId'])) {
+            set_post_thumbnail($post_id, $imageData['imageId']);
+            return;
+        }
+
+        if (empty($imageData['imageUrl'])) {
+            return;
+        }
+
+        $imgArray = ['name' => wp_basename($imageData['imageUrl']), 'tmp_name' => download_url($imageData['imageUrl'])];
+
+        if (!is_wp_error($imgArray['tmp_name'])) {
+            $imageId = media_handle_sideload($imgArray, $post_id);
+
+            if (is_wp_error($imageId)) {
+                @unlink($imgArray['tmp_name']);
+                return;
             }
 
-            if (!empty($imageData['imageId'])) {
-                set_post_thumbnail($post_id, $imageData['imageId']);
-                continue;
+            $this->productImages[$imageData['product_id']] = $imageId;
+
+            set_post_thumbnail($post_id, $imageId);
+        }
+    }
+
+    private function setPrices($offer, $post_id)
+    {
+        $price = (float) $offer['price_value'];
+
+        if (!empty($options['margin'])) {
+            if ($options['marginType'] == 'sum') {
+                $price += $options['margin'];
+            } elseif ($options['marginType'] == 'percent') {
+                $price = $price * ($options['margin'] / 100);
             }
+        }
 
-            if (empty($imageData['imageUrl'])) {
-                continue;
-            }
+        $price = round($price, 2);
 
-            $imgArray = ['name' => wp_basename($imageData['imageUrl']), 'tmp_name' => download_url($imageData['imageUrl'])];
-
-            if (!is_wp_error($imgArray['tmp_name'])) {
-                $imageId = media_handle_sideload($imgArray, $post_id);
-
-                if (is_wp_error($imageId)) {
-                    @unlink($imgArray['tmp_name']);
-                    continue;
-                }
-
-                $this->productImages[$imageData['product_id']] = $imageId;
-
-                set_post_thumbnail($post_id, $imageId);
-            }
+        if ($price != 0) {
+            update_post_meta($post_id, '_price', $price);
         }
     }
 
