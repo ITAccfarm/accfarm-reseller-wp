@@ -303,7 +303,7 @@ class ImportOffers
                 if (((int) $category['id']) === ((int) $offer['category_id'])) {
                     foreach ($category['product'] as $product) {
                         if (((int) $product['id']) === ((int) $offer['product_id'])) {
-                            $parent = $this->createCategory($category['name'], $imageId);
+                            $parent = $this->createCategory($product['name'], $imageId);
 
                             if (!empty($parent)) {
                                 $this->wooCategories[(int) $offer['product_id']] = $parent;
