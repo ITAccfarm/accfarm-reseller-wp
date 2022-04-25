@@ -7,6 +7,7 @@ use Src\Pages\Hooks;
 use Src\Pages\Import;
 use Src\Pages\Logs;
 use Src\Pages\Mail;
+use Src\Pages\Settings;
 use Src\Pages\Testing;
 use Src\Services\Accfarm;
 use Src\Services\Buy;
@@ -62,6 +63,7 @@ class Init
         Mail::class,
         Logs::class,
         Testing::class,
+        Settings::class,
     ];
 
     public function init()

@@ -18,6 +18,39 @@ class CheckoutCustomFields
 
         // Store data to order meta
         add_action('woocommerce_checkout_create_order', [$this, 'custom_checkout_fields_update_meta'], 10, 2);
+
+        if (get_option('accfarm_reseller_settings_billing_fields')) {
+            // Remove billing
+            add_filter('woocommerce_billing_fields', [$this, 'remove_checkout_fields'], 100);
+            add_filter('woocommerce_checkout_fields', [$this, 'unrequire_checkout_fields']);
+        }
+    }
+
+    public function remove_checkout_fields($fields)
+    {
+        unset($fields['billing_company']);
+        unset($fields['billing_city']);
+        unset($fields['billing_postcode']);
+        unset($fields['billing_country']);
+        unset($fields['billing_phone']);
+        unset($fields['billing_state']);
+        unset($fields['billing_address_1']);
+        unset($fields['billing_address_2']);
+        return $fields;
+    }
+
+    public function unrequire_checkout_fields($fields)
+    {
+        unset($fields['billing_company']);
+        unset($fields['billing_address_1']);
+        unset($fields['billing_address_2']);
+        unset($fields['billing_state']);
+        unset($fields['billing_city']);
+        unset($fields['billing_phone']);
+        unset($fields['billing_postcode']);
+        unset($fields['billing_country']);
+
+        return $fields;
     }
 
     public function custom_checkout_fields()
