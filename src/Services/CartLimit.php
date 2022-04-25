@@ -11,7 +11,7 @@ class CartLimit
     public function register()
     {
         add_filter( 'woocommerce_add_to_cart_validation', [$this, 'only_one_in_cart'], 9999, 2 );
-        add_filter( 'wc_add_to_cart_message', [$this, 'remove_continue_message']);
+        add_filter( 'wc_add_to_cart_message_html', [$this, 'remove_continue_message']);
     }
 
     public function only_one_in_cart($passed, $added_product_id)
