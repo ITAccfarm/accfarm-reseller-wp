@@ -21,6 +21,16 @@ class ImportOffers
      */
     private $productImages = [];
 
+    /**
+     * @var string
+     */
+    private $importType = '';
+
+    /**
+     * @var array
+     */
+    private $wooCategories = [];
+
     private $ajaxEndpoints = [
         'categories' => 'accfarm_get_categories_data',
         'offers' => 'accfarm_get_offers_data',
@@ -103,10 +113,10 @@ class ImportOffers
 
             $offers = [];
 
-            foreach ($data['categories'] as $category) {
+            foreach (array_unique($data['categories']) as $category) {
                 if (!empty($category)) {
                     foreach ($this->getOffers(['category_id' => $category]) as $offer) {
-                        array_push($offers, $offer);
+                        $offers[] = $offer;
                     }
                 }
             }
@@ -115,6 +125,7 @@ class ImportOffers
                 throw new Exception('Offers are empty!');
             }
 
+            $this->importType = 'categories';
             $this->createProducts($offers);
 
             wp_send_json_success(true);
@@ -131,10 +142,10 @@ class ImportOffers
 
             $offers = [];
 
-            foreach ($data['products'] as $product) {
+            foreach (array_unique($data['products']) as $product) {
                 if (!empty($product)) {
                     foreach ($this->getOffers(['product_id' => $product]) as $offer) {
-                        array_push($offers, $offer);
+                        $offers[] = $offer;
                     }
                 }
             }
@@ -143,6 +154,7 @@ class ImportOffers
                 throw new Exception('Offers are empty!');
             }
 
+            $this->importType = 'products';
             $this->createProducts($offers);
 
             wp_send_json_success(true);
@@ -161,6 +173,7 @@ class ImportOffers
                 throw new Exception('Offers are empty!');
             }
 
+            $this->importType = 'products';
             $this->createProducts($data['offers']);
 
             wp_send_json_success(true);
@@ -173,6 +186,7 @@ class ImportOffers
         $this->callback(function () {
             $offers = $this->getOffers([]);
 
+            $this->importType = 'categories';
             $this->createProducts($offers);
 
             wp_send_json_success(true);
@@ -231,7 +245,81 @@ class ImportOffers
                 $this->setProductPrices($offer, $post_id);
             }
 
-            $this->setProductImage($categories, $offer, $post_id);
+            $imageId = $this->setProductImage($categories, $offer, $post_id);
+
+            $this->setProductCategory($categories, $offer, $post_id, $imageId);
+        }
+    }
+
+    private function setProductCategory($categories, $offer, $post_id, $imageId)
+    {
+        if ($this->importType == 'categories') {
+            if (!empty($this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']])) {
+                wp_set_object_terms(
+                    $post_id,
+                    $this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']],
+                    'product_cat'
+                );
+
+                return;
+            }
+
+            foreach ($categories as $category) {
+                if (((int) $category['id']) === ((int) $offer['category_id'])) {
+                    foreach ($category['product'] as $product) {
+                        if (((int) $product['id']) === ((int) $offer['product_id'])) {
+
+                            $parent = $this->createCategory($category['name'], $imageId);
+                            $child = $this->createCategory($product['name'], $imageId, $parent);
+
+                            if (!empty($parent) && !empty($child)) {
+                                $this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']] = [];
+                                wp_set_object_terms(
+                                    $post_id,
+                                    [$parent, $child],
+                                    'product_cat'
+                                );
+                            }
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($this->importType == 'products') {
+            if (!empty($this->wooCategories[(int) $offer['product_id']])) {
+                wp_set_object_terms(
+                    $post_id,
+                    $this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']],
+                    'product_cat'
+                );
+
+                return;
+            }
+
+            foreach ($categories as $category) {
+                if (((int) $category['id']) === ((int) $offer['category_id'])) {
+                    foreach ($category['product'] as $product) {
+                        if (((int) $product['id']) === ((int) $offer['product_id'])) {
+                            $parent = $this->createCategory($category['name'], $imageId);
+
+                            if (!empty($parent)) {
+                                $this->wooCategories[(int) $offer['product_id']] = $parent;
+
+                                wp_set_object_terms(
+                                    $post_id,
+                                    $parent,
+                                    'product_cat'
+                                );
+                            }
+
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -240,16 +328,16 @@ class ImportOffers
         $imageData = $this->getPreviewImage($categories, $offer);
 
         if (empty($imageData)) {
-            return;
+            return null;
         }
 
         if (!empty($imageData['imageId'])) {
             set_post_thumbnail($post_id, $imageData['imageId']);
-            return;
+            return $imageData['imageId'];
         }
 
         if (empty($imageData['imageUrl'])) {
-            return;
+            return null;
         }
 
         $imgArray = ['name' => wp_basename($imageData['imageUrl']), 'tmp_name' => download_url($imageData['imageUrl'])];
@@ -259,13 +347,16 @@ class ImportOffers
 
             if (is_wp_error($imageId)) {
                 @unlink($imgArray['tmp_name']);
-                return;
+                return null;
             }
 
             $this->productImages[$imageData['product_id']] = $imageId;
 
             set_post_thumbnail($post_id, $imageId);
+            return $imageId;
         }
+
+        return null;
     }
 
     private function setProductPrices($offer, $post_id)
@@ -332,6 +423,35 @@ class ImportOffers
         }
 
         return $data;
+    }
+
+    private function createCategory(string $name, int $imgId = null, int $parent = null)
+    {
+        $id = null;
+        $data = [
+            'slug' => mb_strtolower(str_replace(' ', '-', $name)),
+            'description' => '',
+        ];
+
+        if (!empty($parent)) {
+            $data['parent'] = $parent;
+        }
+
+        $response = wp_insert_term($name, 'product_cat', $data);
+
+        if (!empty($response->error_data) && !empty($response->error_data['term_exists'])) {
+            $id = $response->error_data['term_exists'];
+        }
+
+        if (empty($response->error_data) && !empty($response['term_id'])) {
+            $id = $response['term_id'];
+
+            if (!empty($imgId)) {
+                update_term_meta($id, 'thumbnail_id', $imgId);
+            }
+        }
+
+        return $id;
     }
 
     private function callback(Closure $callable)
