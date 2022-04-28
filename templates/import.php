@@ -10,6 +10,13 @@
         </div>
 
         <div style="margin-top: 30px">
+            <h4>Add woocommerce categories on import from accfarm categories</h4>
+
+            <input type="checkbox" id="add-woo-categories">
+            <label for="add-woo-categories">Add Categories</label>
+        </div>
+
+        <div style="margin-top: 30px">
             <h4>Set accfarm prices to products</h4>
 
             <input type="checkbox" id="set-accfarm-prices" checked>

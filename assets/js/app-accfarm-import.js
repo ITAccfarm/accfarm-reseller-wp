@@ -250,6 +250,10 @@ jQuery(document).ready(async function ($) {
             .post('accfarm_get_categories_data')
             .done(response => {
                 accfarmData.categories = response;
+            }).catch(error => {
+                if (error.responseJSON.data.error) {
+                    alert(error.responseJSON.data.error);
+                }
             });
     }
 
@@ -257,7 +261,12 @@ jQuery(document).ready(async function ($) {
         return wp.ajax
             .post('accfarm_get_offers_data', {product_id: productId})
             .done(response => {
+                console.log(response);
                 accfarmData.offers = response;
+            }).catch(error => {
+                if (error.responseJSON.data.error) {
+                    alert(error.responseJSON.data.error);
+                }
             });
     }
 
@@ -270,7 +279,8 @@ jQuery(document).ready(async function ($) {
                 publish: options.publish,
                 setPrices: options.setPrices,
                 margin: options.margin,
-                marginType: options.marginType
+                marginType: options.marginType,
+                addCategories: options.addCategories
             })
             .done(response => {
                 accfarmData.offers = response;
@@ -286,7 +296,8 @@ jQuery(document).ready(async function ($) {
                 publish: options.publish,
                 setPrices: options.setPrices,
                 margin: options.margin,
-                marginType: options.marginType
+                marginType: options.marginType,
+                addCategories: options.addCategories
             })
             .done(() => {});
     }
@@ -310,7 +321,8 @@ jQuery(document).ready(async function ($) {
                 publish: options.publish,
                 setPrices: options.setPrices,
                 margin: options.margin,
-                marginType: options.marginType
+                marginType: options.marginType,
+                addCategories: options.addCategories
             })
             .done(() => {});
     }
@@ -399,6 +411,7 @@ jQuery(document).ready(async function ($) {
 
     function getOptions() {
         let publish = $('#publish-products').prop('checked');
+        let addCategories = $('#add-woo-categories').prop('checked');
         let setPrices = $('#set-accfarm-prices').prop('checked');
         let margin = $('#price-margin').val();
         let marginType = $('#price-margin-select option:selected').attr('value');
@@ -407,7 +420,8 @@ jQuery(document).ready(async function ($) {
             publish: publish,
             setPrices: setPrices,
             margin: margin,
-            marginType: marginType
+            marginType: marginType,
+            addCategories: addCategories,
         }
     }
 

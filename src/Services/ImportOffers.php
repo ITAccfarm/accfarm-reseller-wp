@@ -206,7 +206,8 @@ class ImportOffers
             'publish' => '',
             'setPrices' => '',
             'margin' => '',
-            'marginType' => ''
+            'marginType' => '',
+            'addCategories' => '',
         ]);
 
         $postStatus = $options['publish'] ? 'publish' : 'draft';
@@ -247,7 +248,9 @@ class ImportOffers
 
             $imageId = $this->setProductImage($categories, $offer, $post_id);
 
-            $this->setProductCategory($categories, $offer, $post_id, $imageId);
+            if ($options['addCategories']) {
+                $this->setProductCategory($categories, $offer, $post_id, $imageId);
+            }
         }
     }
 
