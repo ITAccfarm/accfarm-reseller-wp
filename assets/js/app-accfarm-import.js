@@ -261,7 +261,6 @@ jQuery(document).ready(async function ($) {
         return wp.ajax
             .post('accfarm_get_offers_data', {product_id: productId})
             .done(response => {
-                console.log(response);
                 accfarmData.offers = response;
             }).catch(error => {
                 if (error.responseJSON.data.error) {
