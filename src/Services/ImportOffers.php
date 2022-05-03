@@ -276,7 +276,7 @@ class ImportOffers
                             $child = $this->createCategory($product['name'], $imageId, $parent);
 
                             if (!empty($parent) && !empty($child)) {
-                                $this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']] = [];
+                                $this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']] = [$parent, $child];
                                 wp_set_object_terms(
                                     $post_id,
                                     [$parent, $child],
@@ -295,7 +295,7 @@ class ImportOffers
             if (!empty($this->wooCategories[(int) $offer['product_id']])) {
                 wp_set_object_terms(
                     $post_id,
-                    $this->wooCategories[(int) $offer['category_id']][(int) $offer['product_id']],
+                    $this->wooCategories[(int) $offer['product_id']],
                     'product_cat'
                 );
 
