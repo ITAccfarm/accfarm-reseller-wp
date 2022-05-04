@@ -243,7 +243,7 @@ class ImportOffers
             update_post_meta($post_id, '_accfarm_offer_id', $offer['id']);
 
             if ($options['setPrices']) {
-                $this->setProductPrices($offer, $post_id);
+                $this->setProductPrices($offer, $post_id, $options);
             }
 
             $imageId = $this->setProductImage($categories, $offer, $post_id);
@@ -362,7 +362,7 @@ class ImportOffers
         return null;
     }
 
-    private function setProductPrices($offer, $post_id)
+    private function setProductPrices($offer, $post_id, $options)
     {
         $price = (float) $offer['price_value'];
 
