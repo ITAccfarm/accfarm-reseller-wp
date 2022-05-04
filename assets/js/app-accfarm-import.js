@@ -416,11 +416,11 @@ jQuery(document).ready(async function ($) {
         let marginType = $('#price-margin-select option:selected').attr('value');
 
         return {
-            publish: publish,
-            setPrices: setPrices,
+            publish: publish ? 1 : 0,
+            setPrices: setPrices ? 1 : 0,
+            addCategories: addCategories ? 1 : 0,
             margin: margin,
             marginType: marginType,
-            addCategories: addCategories,
         }
     }
 
